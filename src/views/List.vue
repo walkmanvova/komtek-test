@@ -1,6 +1,6 @@
 <template>
   <el-table
-      :data="users.filter(data => !search || (`${data.snils} ${data.firstName} ${data.lastName} ${data.middleName}`).toLowerCase().includes(search.toLowerCase()))"
+      :data="filteredUsers"
       style="width: 100%">
     <el-table-column
         label="ФИО"
@@ -39,7 +39,7 @@
 
 <script>
 export default {
-  props: ['users', 'consultations'],
+  props: ['users'],
   data() {
     return {
       search: '',
@@ -50,5 +50,10 @@ export default {
       return `${row.lastName} ${row.firstName} ${row.middleName}`
     }
   },
+  computed: {
+    filteredUsers() { // Получаем массив пациентов отфильтрованный в соответствии с поисковым запросом
+      return this.users.filter(data => !this.search || (`${data.snils} ${data.firstName} ${data.lastName} ${data.middleName}`).toLowerCase().includes(this.search.toLowerCase()))
+    }
+  }
 }
 </script>

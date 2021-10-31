@@ -1,6 +1,6 @@
 <template>
   <div>
-    <UserForm :user="user" />
+    <UserForm :editableUser="currentUser" />
   </div>
 </template>
 
@@ -11,16 +11,10 @@ export default {
     UserForm
   },
   props: ['users'],
-  data() {
-    return {
-      user: null
+  computed: {
+    currentUser() {
+      return this.users.find(item => item.id === +this.$route.params.id)
     }
-  },
-  created() {
-    const user = this.users.find(item => item.id === +this.$route.params.id)
-    if(user){
-      this.user = user
-    }
-  },
+  }
 }
 </script>

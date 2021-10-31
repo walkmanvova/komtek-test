@@ -1,5 +1,5 @@
 <template>
-  <ConsultationForm :consultation="consultation" />
+  <ConsultationForm :editableConsultation="currentConsultation" />
 </template>
 
 <script>
@@ -9,16 +9,10 @@ export default {
     ConsultationForm
   },
   props: ['consultations'],
-  data() {
-    return {
-      consultation: null
+  computed: {
+    currentConsultation() {
+      return this.consultations.find(consultation => consultation.id === +this.$route.params.id);
     }
-  },
-  created() {
-    const consultation = this.consultations.find(consultation => consultation.id === +this.$route.params.id)
-    if(consultation){
-      this.consultation = consultation
-    }
-  },
+  }
 }
 </script>

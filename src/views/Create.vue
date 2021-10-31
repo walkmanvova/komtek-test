@@ -1,5 +1,5 @@
 <template>
-  <UserForm @create-user="createUser" :users="users" />
+  <UserForm @create-user="createUser" :newUserId="newUserId" />
 </template>
 
 <script>
@@ -12,6 +12,11 @@ export default {
   methods: {
     createUser(user) {
       this.$emit('createUser', user)
+    }
+  },
+  computed: {
+    newUserId() {
+      return Math.max(...this.users.map(i => i.id)) + 1
     }
   }
 }

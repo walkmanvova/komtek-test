@@ -14,7 +14,7 @@
       <el-input v-model="consultationForm.symptoms"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button v-if="$route.name === 'ConsultationEdit'" type="primary" @click="submitForm('consultationForm')">Сохранить изменения</el-button>
+      <el-button v-if="editableConsultation" type="primary" @click="submitForm('consultationForm')">Сохранить изменения</el-button>
       <el-button v-else type="primary" @click="submitForm('consultationForm')">Создать</el-button>
     </el-form-item>
   </el-form>
@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  props: ['consultations', 'consultation'],
+  props: ['newConsultationId', 'editableConsultation'],
   data() {
     return {
       consultationForm: {
@@ -44,10 +44,10 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.$route.name === 'ConsultationEdit') {
-            this.$router.push({name: 'User', params: { id: this.consultation.userId }})
+          if (this.editableConsultation) {
+            this.$router.push({name: 'User', params: { id: this.editableConsultation.userId }})
           } else {
-            this.consultationForm.id = Math.max(...this.consultations.map(i => i.id)) + 1;
+            this.consultationForm.id = this.newConsultationId;
             this.consultationForm.userId = this.$route.params.id;
             this.$emit('consultation-add', this.consultationForm);
             this.$router.push({name: 'User', params: { id: this.$route.params.id }})
@@ -59,8 +59,8 @@ export default {
     }
   },
   created() {
-    if (this.$route.name === 'ConsultationEdit') {
-      this.consultationForm = this.consultation;
+    if (this.editableConsultation) {
+      this.consultationForm = this.editableConsultation;
     }
   }
 }

@@ -24,7 +24,7 @@
       <el-input v-model="ruleForm.snils"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button v-if="$route.name === 'Edit'" type="primary" @click="submitForm('ruleForm')">Сохранить изменения</el-button>
+      <el-button v-if="editableUser" type="primary" @click="submitForm('ruleForm')">Сохранить изменения</el-button>
       <el-button v-else type="primary" @click="submitForm('ruleForm')">Создать</el-button>
     </el-form-item>
   </el-form>
@@ -32,7 +32,7 @@
 
 <script>
 export default {
-  props: ['users', 'user'],
+  props: ['newUserId', 'editableUser'],
   data() {
     let checkSnils = (rule, value, callback) => {
       if (!value) {
@@ -75,10 +75,10 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.$route.name === 'Edit') {
+          if (this.editableUser) {
             this.$router.push({name: 'List'})
           } else {
-            this.ruleForm.id = Math.max(...this.users.map(i => i.id)) + 1;
+            this.ruleForm.id = this.newUserId;
             this.$emit('create-user', this.ruleForm);
             this.$router.push({name: 'List'})
           }
@@ -89,8 +89,8 @@ export default {
     }
   },
   created() {
-    if (this.$route.name === 'Edit') {
-      this.ruleForm = this.user;
+    if (this.editableUser) {
+      this.ruleForm = this.editableUser;
     }
   }
 }

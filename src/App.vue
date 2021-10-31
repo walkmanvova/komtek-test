@@ -7,7 +7,8 @@
     <hr/>
     <el-row :gutter="20" type="flex" justify="center">
       <el-col :xs="24" :sm="22" :md="20" :lg="16" :xl="12">
-        <router-view
+        <!-- Пока не разобрался как правильно обрабатывать дочерними компонентами еще не загруженные данные () -->
+        <router-view v-if="users.length !== 0"
           :users="users"
           :consultations="consultations"
           class="content"
@@ -25,77 +26,8 @@
 export default {
   data() {
     return {
-      users: [{
-        id: 0,
-        firstName: 'Пётр',
-        lastName: 'Петров',
-        middleName: 'Петрович',
-        dateBirth: '01-01-1990',
-        gender: 'мужской',
-        snils: '12345678901'
-      }, {
-        id: 3,
-        firstName: 'Пётр',
-        lastName: 'Иванов',
-        middleName: 'Петрович',
-        dateBirth: '02-04-1934',
-        gender: 'мужской',
-        snils: '12345678902'
-      }, {
-        id: 17,
-        firstName: 'Светлана',
-        lastName: 'Иванова',
-        middleName: 'Петровна',
-        dateBirth: '03-06-1993',
-        gender: 'женский',
-        snils: '12345678903'
-      }, {
-        id: 105,
-        firstName: 'Иван',
-        lastName: 'Иванов',
-        middleName: 'Иванович',
-        dateBirth: '04-08-1980',
-        gender: 'мужской',
-        snils: '12345678904'
-      }],
-      consultations: [{
-        id: 2,
-        userId: 0,
-        date: '01-01-2021',
-        time: '12:30',
-        symptoms: 'Болит живот'
-      }, {
-        id: 20,
-        userId: 0,
-        date: '02-01-2021',
-        time: '14:00',
-        symptoms: 'Болит голова'
-      }, {
-
-        id: 200,
-        userId: 17,
-        date: '03-01-2021',
-        time: '18:00',
-        symptoms: 'Температура'
-      }, {
-        id: 2000,
-        userId: 105,
-        date: '04-01-2021',
-        time: '10:00',
-        symptoms: 'Кашель'
-      }, {
-        id: 2001,
-        userId: 105,
-        date: '04-01-2021',
-        time: '10:30',
-        symptoms: 'Першение'
-      }, {
-        id: 2002,
-        userId: 105,
-        date: '04-01-2021',
-        time: '11:00',
-        symptoms: 'Боль в горле'
-      }]
+      users: [],
+      consultations: []
     }
   },
   methods: {
@@ -106,12 +38,33 @@ export default {
       this.users.push(user)
     },
     deleteConsultation(id) {
-      this.consultations = this.consultations.filter(consultation => {
-        return consultation.id !== id})
+      this.consultations = this.consultations.filter(consultation =>  consultation.id !== id)
     },
     consultationAdd(consultation) {
       this.consultations.push(consultation)
+    },
+    async getUsers() {
+      try {
+        const response = await fetch('https://my-json-server.typicode.com/walkmanvova/komtek-test/users');
+        const result = await response.json();
+        this.users.push(...result);
+      } catch (error) {
+        console.log('error:', error)
+      }
+    },
+    async getConsultations() {
+      try {
+        const response = await fetch('https://my-json-server.typicode.com/walkmanvova/komtek-test/consultations');
+        const result = await response.json();
+        this.consultations.push(...result);
+      } catch (error) {
+        console.log('error:', error)
+      }
     }
+  },
+  created() {
+    this.getUsers();
+    this.getConsultations();
   }
 }
 </script>

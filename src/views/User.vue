@@ -1,10 +1,10 @@
 <template>
   <div>
     <el-descriptions title="Данные пациента">
-      <el-descriptions-item label="ФИО">{{user.lastName}} {{user.firstName}} {{user.middleName}}</el-descriptions-item>
-      <el-descriptions-item label="Дата рождения">{{user.dateBirth}}</el-descriptions-item>
-      <el-descriptions-item label="Пол">{{user.gender}}</el-descriptions-item>
-      <el-descriptions-item label="СНИЛС">{{user.snils}}</el-descriptions-item>
+      <el-descriptions-item label="ФИО">{{currentUser.lastName}} {{currentUser.firstName}} {{currentUser.middleName}}</el-descriptions-item>
+      <el-descriptions-item label="Дата рождения">{{currentUser.dateBirth}}</el-descriptions-item>
+      <el-descriptions-item label="Пол">{{currentUser.gender}}</el-descriptions-item>
+      <el-descriptions-item label="СНИЛС">{{currentUser.snils}}</el-descriptions-item>
     </el-descriptions>
     <el-row :gutter="20">
       <el-col :span="12">Консультации:</el-col>
@@ -12,11 +12,11 @@
         <el-button
           size="mini"
           type="success"
-          @click="$router.push({ name: 'ConsultationAdd', params: { id: user.id } })">Добавить консультацию</el-button>
+          @click="$router.push({ name: 'ConsultationAdd', params: { id: currentUser.id } })">Добавить консультацию</el-button>
       </el-col>
     </el-row>
     <el-table
-        :data="consultationsUser"
+        :data="currentUserConsultations"
         style="width: 100%">
       <el-table-column
           width="100px"
@@ -51,26 +51,17 @@
 <script>
 export default {
   props: ['users', 'consultations'],
-  data() {
-    return {
-      user: null,
-      consultationsUser: null,
-    }
-  },
-  created() {
-    const user = this.users.find(item => item.id === +this.$route.params.id);
-    const consultationsUser = null;
-
-    if(user){
-      this.user = user
-      this.consultationsUser = this.consultations.filter(consultation => consultation.userId === this.user.id)
-    }
-  },
   methods: {
     deleteConsultation(id) {
       this.$emit('delete-consultation', id);
-      // Удаляем консультацию в таблице consultationsUser
-      this.consultationsUser = this.consultationsUser.filter(consultation => consultation.id !== id)
+    }
+  },
+  computed: {
+    currentUser() {
+      return this.users.find(item => item.id === +this.$route.params.id)
+    },
+    currentUserConsultations() {
+      return this.consultations.filter(consultation => consultation.userId === this.currentUser.id)
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <ConsultationForm @consultation-add="consultationAdd" :consultations="consultations" />
+  <ConsultationForm @consultation-add="consultationAdd" :newConsultationId="newConsultationId" />
 </template>
 
 <script>
@@ -12,6 +12,11 @@ export default {
   methods: {
     consultationAdd(consultation) {
       this.$emit('consultationAdd', consultation)
+    }
+  },
+  computed: {
+    newConsultationId() {
+      return Math.max(...this.consultations.map(i => i.id)) + 1
     }
   }
 }
