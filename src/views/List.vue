@@ -42,7 +42,7 @@ export default {
   props: ['users'],
   data() {
     return {
-      search: '',
+      search: ''
     }
   },
   methods: {

@@ -10,16 +10,17 @@
     <hr/>
     <el-row :gutter="20" type="flex" justify="center">
       <el-col :xs="24" :sm="22" :md="20" :lg="16" :xl="12">
-        <!-- Пока не разобрался как правильно обрабатывать дочерними компонентами еще не загруженные данные () -->
-        <router-view v-if="users.length !== 0"
-          :users="users"
-          :consultations="consultations"
-          class="content"
-          @delete-user="deleteUser"
-          @createUser="createUser"
-          @delete-consultation="deleteConsultation"
-          @consultationAdd="consultationAdd"
-        />
+        <div v-loading="!(usersLoaded && consultationsLoaded)">
+          <router-view v-if="usersLoaded && consultationsLoaded"
+            :users="users"
+            :consultations="consultations"
+            class="content"
+            @delete-user="deleteUser"
+            @createUser="createUser"
+            @delete-consultation="deleteConsultation"
+            @consultationAdd="consultationAdd"
+          />
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -30,7 +31,9 @@ export default {
   data() {
     return {
       users: [],
-      consultations: []
+      consultations: [],
+      usersLoaded: false,
+      consultationsLoaded: false
     }
   },
   methods: {
@@ -51,6 +54,7 @@ export default {
         const response = await fetch('https://my-json-server.typicode.com/walkmanvova/komtek-test/users');
         const result = await response.json();
         this.users.push(...result);
+        this.usersLoaded = true;
       } catch (error) {
         console.log('error:', error)
       }
@@ -60,6 +64,7 @@ export default {
         const response = await fetch('https://my-json-server.typicode.com/walkmanvova/komtek-test/consultations');
         const result = await response.json();
         this.consultations.push(...result);
+        this.consultationsLoaded = true;
       } catch (error) {
         console.log('error:', error)
       }
@@ -68,7 +73,6 @@ export default {
   created() {
     this.getUsers();
     this.getConsultations();
-    console.log(this.$router);
   }
 }
 </script>
