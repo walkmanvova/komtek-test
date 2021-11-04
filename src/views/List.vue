@@ -18,7 +18,7 @@
         <el-input
             v-model="search"
             size="mini"
-            placeholder="Type to search"/>
+            placeholder="Поиск по имени или СНИЛС"/>
       </template>
       <template slot-scope="scope">
         <el-button
