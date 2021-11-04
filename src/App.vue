@@ -1,8 +1,11 @@
 <template>
   <div id="app">
     <nav class="nav">
-      <router-link :to="{name: 'List'}">Список пациентов</router-link> |
-      <router-link :to="{name: 'Create'}">Создать пациента</router-link>
+      <el-row>
+        <router-link :to="{name: 'List'}"><el-button type="info" :plain="$route.name !== 'List'"><i class="el-icon-tickets"></i>&nbsp;Список пациентов</el-button></router-link>
+        &nbsp;
+        <router-link :to="{name: 'Create'}"><el-button type="info" :plain="$route.name !== 'Create'"><i class="el-icon-circle-plus-outline"></i>&nbsp;Создать пациента</el-button></router-link>
+      </el-row>
     </nav>
     <hr/>
     <el-row :gutter="20" type="flex" justify="center">
@@ -65,6 +68,7 @@ export default {
   created() {
     this.getUsers();
     this.getConsultations();
+    console.log(this.$router);
   }
 }
 </script>
