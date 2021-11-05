@@ -2,8 +2,7 @@
   <div id="app">
     <nav class="nav">
       <el-row>
-        <router-link :to="{name: 'List'}"><el-button type="info" :plain="$route.name !== 'List'"><i class="el-icon-tickets"></i>&nbsp;Список пациентов</el-button></router-link>
-        &nbsp;
+        <router-link :to="{name: 'List'}"><el-button type="info" :plain="$route.name !== 'List'"><i class="el-icon-tickets"></i>&nbsp;Список пациентов</el-button></router-link>&nbsp;
         <router-link :to="{name: 'Create'}"><el-button type="info" :plain="$route.name !== 'Create'"><i class="el-icon-circle-plus-outline"></i>&nbsp;Создать пациента</el-button></router-link>
       </el-row>
     </nav>
@@ -12,13 +11,7 @@
       <el-col :xs="24" :sm="22" :md="20" :lg="16" :xl="12">
         <div v-loading="!(usersLoaded && consultationsLoaded)">
           <router-view v-if="usersLoaded && consultationsLoaded"
-            :users="users"
-            :consultations="consultations"
             class="content"
-            @delete-user="deleteUser"
-            @createUser="createUser"
-            @delete-consultation="deleteConsultation"
-            @consultationAdd="consultationAdd"
           />
         </div>
       </el-col>
@@ -27,52 +20,17 @@
 </template>
 
 <script>
+import {mapActions, mapGetters} from 'vuex'
 export default {
-  data() {
-    return {
-      users: [],
-      consultations: [],
-      usersLoaded: false,
-      consultationsLoaded: false
-    }
-  },
   methods: {
-    deleteUser(id) {
-      this.users = this.users.filter(user => user.id !== id)
-    },
-    createUser(user) {
-      this.users.push(user)
-    },
-    deleteConsultation(id) {
-      this.consultations = this.consultations.filter(consultation =>  consultation.id !== id)
-    },
-    consultationAdd(consultation) {
-      this.consultations.push(consultation)
-    },
-    async getUsers() {
-      try {
-        const response = await fetch('https://my-json-server.typicode.com/walkmanvova/komtek-test/users');
-        const result = await response.json();
-        this.users.push(...result);
-        this.usersLoaded = true;
-      } catch (error) {
-        console.log('error:', error)
-      }
-    },
-    async getConsultations() {
-      try {
-        const response = await fetch('https://my-json-server.typicode.com/walkmanvova/komtek-test/consultations');
-        const result = await response.json();
-        this.consultations.push(...result);
-        this.consultationsLoaded = true;
-      } catch (error) {
-        console.log('error:', error)
-      }
-    }
+    ...mapActions(['requestUsers', 'requestConsultations'])
   },
-  created() {
-    this.getUsers();
-    this.getConsultations();
+  computed: {
+    ...mapGetters(['usersLoaded', 'consultationsLoaded'])
+  },
+  async created() {
+    this.requestUsers()
+    this.requestConsultations()
   }
 }
 </script>

@@ -1,38 +1,37 @@
 <template>
-  <el-form :model="ruleForm" :rules="rules" @submit.native.prevent ref="ruleForm" label-width="200px" class="demo-ruleForm">
+  <el-form :model="userForm" :rules="rules" @submit.native.prevent ref="userForm" label-width="200px">
     <el-form-item label="Фамилия" prop="lastName">
-      <el-input v-model="ruleForm.lastName"></el-input>
+      <el-input v-model="userForm.lastName"></el-input>
     </el-form-item>
     <el-form-item label="Имя" prop="firstName">
-      <el-input v-model="ruleForm.firstName"></el-input>
+      <el-input v-model="userForm.firstName"></el-input>
     </el-form-item>
     <el-form-item label="Отчество" prop="middleName">
-      <el-input v-model="ruleForm.middleName"></el-input>
+      <el-input v-model="userForm.middleName"></el-input>
     </el-form-item>
     <el-form-item label="Дата рождения" required>
       <el-form-item prop="dateBirth">
-        <el-date-picker type="date" placeholder="Выберите дату" format="dd-MM-yyyy" value-format="dd-MM-yyyy" :picker-options="{ firstDayOfWeek: 1 }" v-model="ruleForm.dateBirth"></el-date-picker>
+        <el-date-picker type="date" placeholder="Выберите дату" format="dd-MM-yyyy" value-format="dd-MM-yyyy" :picker-options="{ firstDayOfWeek: 1 }" v-model="userForm.dateBirth"></el-date-picker>
       </el-form-item>
     </el-form-item>
     <el-form-item label="Пол" prop="gender">
-      <el-radio-group v-model="ruleForm.gender">
+      <el-radio-group v-model="userForm.gender">
         <el-radio label="мужской"></el-radio>
         <el-radio label="женский"></el-radio>
       </el-radio-group>
     </el-form-item>
     <el-form-item label="СНИЛС" prop="snils">
-      <el-input v-model="ruleForm.snils"></el-input>
+      <el-input v-model="userForm.snils"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button v-if="editableUser" type="primary" @click="submitForm('ruleForm')">Сохранить изменения</el-button>
-      <el-button v-else type="primary" @click="submitForm('ruleForm')">Создать</el-button>
+      <el-button type="primary" @click="submitForm('userForm')">{{ editForm ? 'Сохранить изменения' : 'Создать' }}</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
+import {mapMutations, mapGetters} from 'vuex'
 export default {
-  props: ['newUserId', 'editableUser'],
   data() {
     let checkSnils = (rule, value, callback) => {
       if (!value) {
@@ -44,7 +43,7 @@ export default {
       }
     }
     return {
-      ruleForm: {
+      userForm: {
         firstName: '',
         lastName: '',
         middleName: '',
@@ -68,18 +67,19 @@ export default {
         snils: [
           { validator: checkSnils, trigger: 'blur' }
         ]
-      }
+      },
+      editForm: this.$route.name === 'Edit'
     };
   },
   methods: {
+    ...mapMutations(['addUser']),
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.editableUser) {
+          if (this.editForm) {
             this.$router.push({name: 'List'})
           } else {
-            this.ruleForm.id = this.newUserId;
-            this.$emit('create-user', this.ruleForm);
+            this.addUser(this.userForm);
             this.$router.push({name: 'List'})
           }
         } else {
@@ -88,9 +88,12 @@ export default {
       });
     }
   },
+  computed: {
+    ...mapGetters(['getCurrentUser']),
+  },
   created() {
-    if (this.editableUser) {
-      this.ruleForm = this.editableUser;
+    if (this.editForm) {
+      this.userForm = this.getCurrentUser(+this.$route.params.id)
     }
   }
 }

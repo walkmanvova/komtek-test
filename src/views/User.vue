@@ -49,19 +49,18 @@
 </template>
 
 <script>
+import {mapMutations, mapGetters} from "vuex";
 export default {
-  props: ['users', 'consultations'],
   methods: {
-    deleteConsultation(id) {
-      this.$emit('delete-consultation', id);
-    }
+    ...mapMutations(['deleteConsultation'])
   },
   computed: {
+    ...mapGetters(['getCurrentUser', 'getUserConsultations']),
     currentUser() {
-      return this.users.find(item => item.id === +this.$route.params.id)
+      return this.getCurrentUser(+this.$route.params.id)
     },
     currentUserConsultations() {
-      return this.consultations.filter(consultation => consultation.userId === this.currentUser.id)
+      return this.getUserConsultations(+this.currentUser.id)
     }
   }
 }

@@ -29,30 +29,33 @@
           size="mini"
           @click="$router.push({ name: 'Edit', params: { id: scope.row.id } })">Редактировать</el-button>
         <el-button
-          size="mini"
-          type="danger"
-          @click="$emit('delete-user', scope.row.id)">Удалить</el-button>
+            size="mini"
+            type="danger"
+            @click="deleteUser(scope.row.id)">Удалить</el-button>
       </template>
     </el-table-column>
   </el-table>
 </template>
 
 <script>
+import {mapMutations, mapGetters} from "vuex";
+
 export default {
-  props: ['users'],
   data() {
     return {
       search: ''
     }
   },
   methods: {
+    ...mapMutations(['deleteUser']),
     formatter(row, col, value, index) {
       return `${row.lastName} ${row.firstName} ${row.middleName}`
     }
   },
   computed: {
+    ...mapGetters(['allUsers']),
     filteredUsers() { // Получаем массив пациентов отфильтрованный в соответствии с поисковым запросом
-      return this.users.filter(data => !this.search || (`${data.snils} ${data.firstName} ${data.lastName} ${data.middleName}`).toLowerCase().includes(this.search.toLowerCase()))
+      return this.allUsers.filter(data => !this.search || (`${data.snils} ${data.firstName} ${data.lastName} ${data.middleName}`).toLowerCase().includes(this.search.toLowerCase()))
     }
   }
 }

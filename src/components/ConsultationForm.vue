@@ -14,15 +14,14 @@
       <el-input v-model="consultationForm.symptoms"></el-input>
     </el-form-item>
     <el-form-item>
-      <el-button v-if="editableConsultation" type="primary" @click="submitForm('consultationForm')">Сохранить изменения</el-button>
-      <el-button v-else type="primary" @click="submitForm('consultationForm')">Создать</el-button>
+      <el-button type="primary" @click="submitForm('consultationForm')">{{ editForm ? 'Сохранить изменения' : 'Создать' }}</el-button>
     </el-form-item>
   </el-form>
 </template>
 
 <script>
+import {mapMutations, mapGetters} from "vuex";
 export default {
-  props: ['newConsultationId', 'editableConsultation'],
   data() {
     return {
       consultationForm: {
@@ -37,20 +36,22 @@ export default {
         time: [
           { type: 'string', required: true, message: 'Это поле обязательно для заполнения', trigger: 'change' }
         ]
-      }
+      },
+      editForm: this.$route.name === 'ConsultationEdit',
+      userId: ''
     }
   },
   methods: {
+    ...mapMutations(['addConsultation']),
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          if (this.editableConsultation) {
-            this.$router.push({name: 'User', params: { id: this.editableConsultation.userId }})
+          if (this.editForm) {
+            this.$router.push({name: 'User', params: { id: this.consultationForm.userId }})
           } else {
-            this.consultationForm.id = this.newConsultationId;
-            this.consultationForm.userId = this.$route.params.id;
-            this.$emit('consultation-add', this.consultationForm);
-            this.$router.push({name: 'User', params: { id: this.$route.params.id }})
+            this.consultationForm.userId = +this.$route.params.id;
+            this.addConsultation(this.consultationForm);
+            this.$router.push({name: 'User', params: { id: +this.$route.params.id }});
           }
         } else {
           return false;
@@ -58,9 +59,12 @@ export default {
       });
     }
   },
+  computed: {
+  ...mapGetters(['getCurrentConsultation']),
+  },
   created() {
-    if (this.editableConsultation) {
-      this.consultationForm = this.editableConsultation;
+    if (this.editForm) {
+      this.consultationForm = this.getCurrentConsultation(+this.$route.params.id);
     }
   }
 }

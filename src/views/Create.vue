@@ -1,5 +1,5 @@
 <template>
-  <UserForm @create-user="createUser" :newUserId="newUserId" />
+  <UserForm />
 </template>
 
 <script>
@@ -8,16 +8,5 @@ export default {
   components: {
     UserForm
   },
-  props: ['users'],
-  methods: {
-    createUser(user) {
-      this.$emit('createUser', user)
-    }
-  },
-  computed: {
-    newUserId() {
-      return Math.max(...this.users.map(i => i.id)) + 1
-    }
-  }
 }
 </script>
