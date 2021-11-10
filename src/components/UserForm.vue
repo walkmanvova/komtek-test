@@ -72,16 +72,16 @@ export default {
     };
   },
   methods: {
-    ...mapMutations(['addUser']),
+    ...mapMutations(['addUser', 'editUser']),
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           if (this.editForm) {
-            this.$router.push({name: 'List'})
+            this.editUser(this.userForm)
           } else {
             this.addUser(this.userForm);
-            this.$router.push({name: 'List'})
           }
+          this.$router.push({name: 'List'})
         } else {
           return false;
         }
@@ -93,7 +93,7 @@ export default {
   },
   created() {
     if (this.editForm) {
-      this.userForm = this.getCurrentUser(+this.$route.params.id)
+      this.userForm = {...this.getCurrentUser(+this.$route.params.id)} //Клонируем обьект
     }
   }
 }
